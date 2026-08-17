@@ -1,0 +1,371 @@
+/* ============================================================================
+   SCENE RADAR — xerox flyer theme
+   Photocopied basement-show flyer: pure black ink on cheap paper, one screaming
+   red, halftone grain, hard offset shadows, everything a half-degree off square.
+   Type is condensed for headers and typewriter-mono for body, the way a flyer
+   made from a typewriter and a copier actually looked.
+   ============================================================================ */
+
+:root {
+  --paper: #f2f0e9;
+  --paper-2: #e8e5db; /* second sheet, for insets */
+  --ink: #0a0a0a;
+  --ink-soft: #4a4844;
+  --ink-faint: #8b877e;
+  --red: #d81e05;
+  --rule: #0a0a0a;
+
+  --t1: #d81e05;
+  --t2: #0a0a0a;
+  --t3: #8b877e;
+
+  --head: "Arial Narrow", "Helvetica Neue Condensed", "Liberation Sans Narrow", Impact, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 13px/1.55 var(--mono);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Halftone grain over the whole page — the photocopier dot pattern. Fixed so it
+   doesn't slide around while scrolling, which is what makes it read as paper
+   texture rather than as a background image. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.055;
+  background-image: radial-gradient(circle at 1px 1px, #000 0.9px, transparent 0);
+  background-size: 4px 4px;
+}
+
+a { color: var(--ink); }
+
+/* ------------------------------------------------------------------ chrome -- */
+
+.topbar {
+  background: var(--ink);
+  color: var(--paper);
+  border-bottom: 3px solid var(--ink);
+}
+.topbar-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: stretch;
+  gap: 26px;
+  flex-wrap: wrap;
+}
+.wordmark {
+  font-family: var(--head);
+  font-weight: 700;
+  font-size: 27px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 13px 0 11px;
+  margin-right: 4px;
+  white-space: nowrap;
+}
+.wordmark .rad { color: var(--red); }
+
+nav { display: flex; align-items: stretch; gap: 2px; }
+nav a {
+  font-family: var(--head);
+  font-size: 15px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: #b8b4ab;
+  text-decoration: none;
+  padding: 16px 13px 13px;
+  border-bottom: 4px solid transparent;
+}
+nav a:hover { color: var(--paper); }
+nav a.on { color: var(--paper); border-bottom-color: var(--red); }
+nav a .n {
+  font-family: var(--mono);
+  font-size: 10px;
+  vertical-align: super;
+  margin-left: 3px;
+  color: var(--red);
+}
+
+main { max-width: 1080px; margin: 0 auto; padding: 30px 24px 90px; }
+
+.page-head { margin-bottom: 22px; }
+.page-head h1 {
+  font-family: var(--head);
+  font-size: 40px;
+  line-height: 0.95;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin: 0 0 7px;
+}
+.page-head p { margin: 0; color: var(--ink-soft); font-size: 12.5px; }
+
+/* Section rule — the thick/thin double line off a photocopied header */
+.rule {
+  border: none;
+  border-top: 3px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  height: 3px;
+  margin: 26px 0 16px;
+}
+h2.section {
+  font-family: var(--head);
+  font-size: 19px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  margin: 0 0 3px;
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+}
+h2.section .count {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 1px 7px;
+}
+.section-note { color: var(--ink-soft); font-size: 12px; margin: 0 0 14px; }
+
+/* ------------------------------------------------------------------- cards -- */
+
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 17px; }
+
+.card {
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+  padding: 13px 14px 12px;
+  position: relative;
+}
+/* Every card a hair off square, alternating, like they were taped down by hand. */
+.cards > .card:nth-child(odd) { transform: rotate(-0.35deg); }
+.cards > .card:nth-child(even) { transform: rotate(0.3deg); }
+.card:hover { box-shadow: 6px 6px 0 var(--red); }
+
+.card h3 {
+  font-family: var(--head);
+  font-size: 22px;
+  line-height: 1.05;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin: 0 0 4px;
+  padding-right: 46px;
+}
+.card .meta { font-size: 11.5px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.04em; }
+.card .sig { margin-top: 9px; padding-top: 8px; border-top: 1px solid var(--ink); font-size: 12px; }
+.card .foot { margin-top: 10px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+
+/* Tier stamp, top-right, rotated like a rubber stamp */
+.stamp {
+  position: absolute;
+  top: 9px; right: 10px;
+  font-family: var(--head);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  border: 2px solid currentColor;
+  padding: 0 5px;
+  transform: rotate(5deg);
+}
+.stamp.t1 { color: var(--t1); }
+.stamp.t2 { color: var(--t2); }
+.stamp.t3 { color: var(--t3); }
+.stamp.tnone { color: var(--ink-faint); border-style: dashed; }
+
+/* ------------------------------------------------------------------ tables -- */
+
+table { width: 100%; border-collapse: collapse; }
+th {
+  font-family: var(--head);
+  text-align: left;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+  padding: 6px 10px;
+  background: var(--ink);
+  color: var(--paper);
+  border: 1px solid var(--ink);
+}
+td { padding: 9px 10px; border: 1px solid var(--ink); vertical-align: top; font-size: 12.5px; }
+tr:nth-child(even) td { background: rgba(0, 0, 0, 0.022); }
+tr:hover td { background: rgba(216, 30, 5, 0.055); }
+tr.past td { color: var(--ink-faint); }
+
+.group-row td {
+  background: var(--ink) !important;
+  color: var(--paper);
+  font-family: var(--head);
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+}
+.group-row .count { font-family: var(--mono); font-size: 10.5px; margin-left: 8px; letter-spacing: 0; }
+
+/* ------------------------------------------------------------------ badges -- */
+
+.badge {
+  display: inline-block;
+  font-family: var(--head);
+  font-size: 12px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  padding: 1px 7px;
+  border: 1.5px solid var(--ink);
+  white-space: nowrap;
+}
+.badge.CONFIRMED { background: var(--ink); color: var(--paper); }
+.badge.SIGNAL { background: transparent; border-style: dashed; color: var(--ink-soft); }
+.badge.hot { background: var(--red); border-color: var(--red); color: var(--paper); }
+
+.tag {
+  display: inline-block;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid var(--ink-faint);
+  color: var(--ink-soft);
+  padding: 0 5px;
+  margin: 0 4px 4px 0;
+}
+.tag.warn { border-color: var(--red); color: var(--red); }
+
+/* ------------------------------------------------------------- break-glass -- */
+
+.alarm {
+  border: 3px solid var(--red);
+  box-shadow: 5px 5px 0 var(--ink);
+  padding: 14px 16px;
+  margin-bottom: 26px;
+  transform: rotate(-0.4deg);
+  background: var(--paper);
+}
+.alarm h2 {
+  font-family: var(--head);
+  font-size: 21px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin: 0 0 8px;
+}
+.alarm ul { margin: 0; padding-left: 17px; }
+.alarm li { margin-bottom: 4px; }
+.alarm .deadline { color: var(--red); font-weight: 700; }
+
+/* ------------------------------------------------------------------ inputs -- */
+
+select, input, textarea, button {
+  font-family: var(--mono);
+  font-size: 12px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1.5px solid var(--ink);
+  border-radius: 0;
+  padding: 4px 7px;
+}
+select { cursor: pointer; text-transform: uppercase; letter-spacing: 0.04em; }
+textarea { resize: vertical; line-height: 1.5; width: 100%; }
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--red); outline-offset: 1px; }
+
+button {
+  cursor: pointer;
+  font-family: var(--head);
+  font-size: 13px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+button:hover { box-shadow: 3px 3px 0 var(--red); }
+button:active { box-shadow: 0 0 0 var(--ink); transform: translate(2px, 2px); }
+button.primary { background: var(--ink); color: var(--paper); }
+button.danger { color: var(--red); border-color: var(--red); }
+button:disabled { opacity: 0.4; cursor: default; box-shadow: none; }
+
+.filters { display: flex; gap: 6px; flex-wrap: wrap; }
+.filters button {
+  box-shadow: none;
+  background: transparent;
+  border-width: 1.5px;
+  font-size: 12px;
+  padding: 3px 10px;
+}
+.filters button.on { background: var(--ink); color: var(--paper); }
+.filters button:hover { box-shadow: 2px 2px 0 var(--red); }
+
+.toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin: 16px 0 12px; }
+.search { width: 200px; }
+
+/* ------------------------------------------------------------------ drawer -- */
+
+.overlay { position: fixed; inset: 0; background: rgba(10,10,10,0.45); display: flex; justify-content: flex-end; z-index: 100; }
+.drawer {
+  width: min(580px, 94vw);
+  height: 100%;
+  overflow-y: auto;
+  background: var(--paper);
+  border-left: 3px solid var(--ink);
+  padding: 24px 26px 60px;
+}
+.drawer h2 { font-family: var(--head); font-size: 30px; text-transform: uppercase; letter-spacing: 0.02em; margin: 0 0 3px; line-height: 1; }
+.drawer .sub { color: var(--ink-soft); font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; }
+.drawer section { margin-bottom: 15px; }
+.drawer section h4 {
+  font-family: var(--head); font-size: 12px; letter-spacing: 0.11em; text-transform: uppercase;
+  margin: 0 0 4px; padding-bottom: 2px; border-bottom: 1px solid var(--ink);
+}
+.drawer section p { margin: 0; font-size: 12.5px; }
+.drawer .srcs { margin: 0; padding-left: 15px; }
+.drawer .srcs a { font-size: 11.5px; word-break: break-all; }
+.field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+.field label { font-family: var(--head); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; }
+.drawer-foot { display: flex; justify-content: space-between; gap: 8px; margin-top: 22px; border-top: 3px solid var(--ink); padding-top: 15px; }
+
+/* ------------------------------------------------------------------ misc ---- */
+
+.empty {
+  border: 2px dashed var(--ink);
+  padding: 48px 20px;
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+.empty strong { font-family: var(--head); font-size: 17px; letter-spacing: 0.09em; text-transform: uppercase; display: block; margin-bottom: 5px; color: var(--ink); }
+.muted { color: var(--ink-soft); }
+.saved { color: var(--red); font-family: var(--head); font-size: 12px; letter-spacing: 0.08em; margin-left: 6px; }
+.mono-sm { font-size: 11px; color: var(--ink-soft); }
+.when { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.when .day { font-family: var(--head); font-size: 15px; letter-spacing: 0.03em; }
+.when .dow { color: var(--ink-soft); font-size: 11px; margin-left: 4px; text-transform: uppercase; }
+.onsale { font-size: 11px; color: var(--ink-soft); margin-top: 2px; }
+.onsale.soon { color: var(--red); font-weight: 700; }
+
+.report { background: var(--paper-2); border: 2px solid var(--ink); padding: 18px 20px; white-space: pre-wrap; font-size: 12px; line-height: 1.6; overflow-x: auto; }
+
+.stats { display: flex; gap: 0; flex-wrap: wrap; border: 2px solid var(--ink); margin-bottom: 20px; }
+.stat { padding: 9px 15px; border-right: 1px solid var(--ink); flex: 1 1 auto; }
+.stat:last-child { border-right: none; }
+.stat b { font-family: var(--head); font-size: 25px; display: block; line-height: 1; }
+.stat span { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-soft); }
+.stat.hot b { color: var(--red); }
+
+@media (max-width: 640px) {
+  .wordmark { font-size: 22px; }
+  .page-head h1 { font-size: 30px; }
+  .cards { grid-template-columns: 1fr; }
+  table { font-size: 11.5px; }
+}

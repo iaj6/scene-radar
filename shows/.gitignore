@@ -1,0 +1,13 @@
+node_modules/
+
+# build output
+.next/
+out/
+*.tsbuildinfo
+
+# vercel link (projectId / orgId)
+.vercel/
+
+# env: ignore every real value, keep the documented template
+.env*
+!.env.example

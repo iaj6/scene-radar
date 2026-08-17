@@ -1,0 +1,29 @@
+{
+  "_comment": [
+    "The roster of record, in structured form. This is the machine-readable half of",
+    "your taste profile: config/taste.md explains the judgment, this file lists the",
+    "bands. Keep the two in sync — every band here should appear in taste.md's tier",
+    "lists, and vice versa.",
+    "",
+    "Used by `npm run seed-board` to create the initial band rows. Once the board is",
+    "live, the board is the system of record and you curate tiers in the UI.",
+    "",
+    "  tier              1 = drop everything, 2 = would drive for it, 3 = curious.",
+    "                    Tier drives travel range and alert urgency, not whether a",
+    "                    show gets reported.",
+    "  lineup_qualifier  optional. A reunion without this person does not count as a",
+    "                    hit. Reported, but never routed as break-glass.",
+    "  no_surface        optional. true for bands with no socials, no Bandcamp, no",
+    "                    website — usually because they ended before social media.",
+    "                    The 'dormant account wakes up' signal can never fire for",
+    "                    them, so the agent watches labels and members' other bands",
+    "                    instead, and caps their recheck cadence at monthly."
+  ],
+  "bands": [
+    { "name": "<band that broke up and would be a genuine event>", "tier": 1 },
+    { "name": "<band with no online presence at all>", "tier": 1, "no_surface": true },
+    { "name": "<band that only counts with a specific member>", "tier": 1, "lineup_qualifier": "<person> on <instrument>" },
+    { "name": "<band that surfaces occasionally, worth a weeknight drive>", "tier": 2 },
+    { "name": "<small regional band — value is mostly proximity>", "tier": 3 }
+  ]
+}

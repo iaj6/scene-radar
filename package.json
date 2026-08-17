@@ -1,0 +1,26 @@
+{
+  "name": "scene-radar",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Managed Agent that tracks DIY/underground bands for tour dates and one-offs the aggregators miss.",
+  "scripts": {
+    "setup": "tsx src/setup.ts",
+    "init-config": "tsx src/init-config.ts",
+    "update": "tsx src/update.ts",
+    "setup-skills": "tsx src/setup-skills.ts",
+    "setup-mcp": "tsx src/setup-mcp.ts",
+    "sweep": "tsx src/sweep.ts",
+    "seed-board": "tsx src/seed-board.ts",
+    "deploy-sweep": "tsx src/deploy-sweep.ts",
+    "sweep-runs": "tsx src/sweep-runs.ts",
+    "reconcile-sweeps": "tsx src/reconcile-sweeps.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.112.3"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "tsx": "latest"
+  }
+}

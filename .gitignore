@@ -1,0 +1,33 @@
+node_modules/
+
+# secrets / local env — keep .env.example, ignore every real value
+.env
+.env*.local
+*.local
+!.env.example
+
+# local config — the taste profile, source registry and roster are YOURS.
+# Only the committed templates ship; `npm run init-config` creates the real files.
+/config/*
+!/config/README.md
+!/config/*.example.md
+!/config/*.example.json
+
+# provisioned Anthropic resource IDs (agents, vault, memory store).
+# Recreated by `npm run setup`; account-scoped, so it stays local.
+.scene-radar.json
+
+# agent run artifacts (anchored: must not match shows/app/sweeps/ source)
+/sweeps/
+*.log
+
+# build output (defense-in-depth; shows/ has its own .gitignore too)
+.next/
+out/
+*.tsbuildinfo
+.vercel/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
