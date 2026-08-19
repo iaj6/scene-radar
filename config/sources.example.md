@@ -67,15 +67,40 @@ Checked per watchlist band rather than globally:
 
 ## Standing negative findings
 
-**Record every dead end here, permanently.** The failure mode this prevents: a bootstrap
-proposes the obvious, famous, all-ages club for your region — and it closed years ago.
-It sounds exactly right, which is why it survives review, and it will be re-proposed on
-every future bootstrap unless the negative finding is written down.
+**Record every dead end here, permanently.** This is the section people skip, and it is
+the one that compounds.
 
-Format each as the claim, the correction, and a source:
+The failure mode it prevents: a bootstrap proposes the obvious, famous, all-ages club
+for your region — and it closed eight years ago. The proposal *sounds* exactly right,
+which is why it survives your review. Worse, nothing about the next bootstrap is any
+wiser: the same plausible dead venue gets re-proposed every single run until the
+correction is written down here, where it goes into the prompt.
+
+A negative finding is not a note-to-self. It is a permanent instruction to the agent,
+and it is worth as much as a positive one.
+
+Format each as the claim, the correction, and a source. The source matters — it is what
+lets a future you re-verify the correction instead of taking it on faith:
 
 - **⛔ Do not add <venue> (<city>).** <Why it's wrong — closed in <year>, wrong region,
   duplicate of <other entry>.> Source: <url>
+
+Worked example (invented, for shape — replace it):
+
+- **⛔ Do not add The Pit (Rivertown).** The obvious, famous all-ages punk club for this
+  region and the first thing any search surfaces — but it **closed in 2016** and the
+  building has been vacant since. Every bootstrap so far has proposed it.
+  Source: rivertown-scene-archive.org/the-pit
+- **⛔ Do not add Grand Hall Presents (Rivertown).** Real and active, but a **ticketing
+  reseller**, not a promoter — it lists shows only after they are announced elsewhere,
+  so it never produces early signal. Duplicate of coverage already in the listers table.
+  Source: grandhallpresents.com/about
+
+The three shapes worth recording: **dead** (closed, defunct, permanently offline),
+**wrong** (right name, wrong region or wrong entity), and **useless** (real and active,
+but structurally incapable of producing early signal — resellers, aggregator mirrors,
+sites that only repost). The third is the easiest to miss and the most expensive, since
+it looks like a working source forever.
 
 ## Known blind spots
 
