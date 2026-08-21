@@ -97,14 +97,24 @@ export async function listShows(): Promise<Show[]> {
   });
 }
 
-export function isUpcoming(s: Show, today = new Date().toISOString().slice(0, 10)): boolean {
+// Structural params, not `Show`: these read only researched fields, never `status`.
+// That's what lets them run unchanged over a redacted ViewShow (see lib/viewer.ts) —
+// and it's enforced by the type rather than left to a comment.
+export function isUpcoming(
+  s: Pick<Show, "date">,
+  today = new Date().toISOString().slice(0, 10),
+): boolean {
   return s.date === null || s.date >= today;
 }
 
 // Break-glass: the things that stop being actionable if you see them a week late.
 // Tier 1 anywhere, or tickets going on sale within `days`. A show whose on-sale date
 // has already passed is not urgent — it's either gone or it isn't.
-export function isUrgent(s: Show, today = new Date().toISOString().slice(0, 10), days = 7): boolean {
+export function isUrgent(
+  s: Pick<Show, "date" | "confidence" | "lineup_ok" | "tier" | "on_sale">,
+  today = new Date().toISOString().slice(0, 10),
+  days = 7,
+): boolean {
   if (!isUpcoming(s, today) || s.confidence !== "CONFIRMED") return false;
   // A reunion that fails its lineup qualifier — or whose lineup nobody has stated — is
   // not the band he wants to see. Never alarm on one.

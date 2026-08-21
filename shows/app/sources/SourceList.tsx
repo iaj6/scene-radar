@@ -10,7 +10,7 @@ const REACH_LABEL: Record<string, string> = {
   unverified: "not opened",
 };
 
-export function SourceList({ initial }: { initial: Source[] }) {
+export function SourceList({ initial, readOnly = false }: { initial: Source[]; readOnly?: boolean }) {
   const [sources, setSources] = useState(initial);
   const [q, setQ] = useState("");
   const [kind, setKind] = useState<string>("all");
@@ -84,10 +84,10 @@ export function SourceList({ initial }: { initial: Source[] }) {
                 </div>
                 <div className="foot">
                   <div className="filters">
-                    <button onClick={() => patch(s.id, { status: "adopted", tier: 1 })}>adopt · every sweep</button>
-                    <button onClick={() => patch(s.id, { status: "adopted", tier: 2 })}>adopt · on signal</button>
+                    {!readOnly && <button onClick={() => patch(s.id, { status: "adopted", tier: 1 })}>adopt · every sweep</button>}
+                    {!readOnly && <button onClick={() => patch(s.id, { status: "adopted", tier: 2 })}>adopt · on signal</button>}
                   </div>
-                  <button className="danger" onClick={() => patch(s.id, { status: "rejected" })}>reject</button>
+                  {!readOnly && <button className="danger" onClick={() => patch(s.id, { status: "rejected" })}>reject</button>}
                 </div>
               </div>
             ))}
@@ -121,10 +121,14 @@ export function SourceList({ initial }: { initial: Source[] }) {
             {adopted.map((s) => (
               <tr key={s.id}>
                 <td>
-                  <select value={s.tier ?? 2} onChange={(e) => patch(s.id, { tier: Number(e.target.value) as 1 | 2 })}>
-                    <option value={1}>every</option>
-                    <option value={2}>on signal</option>
-                  </select>
+                  {readOnly ? (
+                    <span>{(s.tier ?? 2) === 1 ? "every" : "on signal"}</span>
+                  ) : (
+                    <select value={s.tier ?? 2} onChange={(e) => patch(s.id, { tier: Number(e.target.value) as 1 | 2 })}>
+                      <option value={1}>every</option>
+                      <option value={2}>on signal</option>
+                    </select>
+                  )}
                 </td>
                 <td>
                   <strong>{s.name}</strong>
@@ -145,7 +149,7 @@ export function SourceList({ initial }: { initial: Source[] }) {
                   {s.reach_notes && <div className="mono-sm">{s.reach_notes}</div>}
                 </td>
                 <td style={{ textAlign: "center", fontWeight: 700 }}>{s.produced_finds ?? 0}</td>
-                <td><button className="danger" onClick={() => patch(s.id, { status: "rejected" })}>drop</button></td>
+                <td>{!readOnly && <button className="danger" onClick={() => patch(s.id, { status: "rejected" })}>drop</button>}</td>
               </tr>
             ))}
           </tbody>
@@ -166,7 +170,7 @@ export function SourceList({ initial }: { initial: Source[] }) {
                   <td style={{ fontWeight: 700 }}>{s.name}</td>
                   <td className="mono-sm">{s.notes ?? s.reach_notes ?? "—"}</td>
                   <td style={{ width: 100 }}>
-                    <button onClick={() => patch(s.id, { status: "adopted", tier: 2 })}>restore</button>
+                    {!readOnly && <button onClick={() => patch(s.id, { status: "adopted", tier: 2 })}>restore</button>}
                   </td>
                 </tr>
               ))}

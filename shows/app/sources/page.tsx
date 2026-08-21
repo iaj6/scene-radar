@@ -1,9 +1,11 @@
 import { listSources } from "@/lib/sources";
+import { getViewer } from "@/lib/viewer-server";
 import { SourceList } from "./SourceList";
 
 export const dynamic = "force-dynamic";
 
 export default async function Page() {
+  const viewer = await getViewer();
   const sources = await listSources();
   const adopted = sources.filter((s) => s.status === "adopted");
   const proposed = sources.filter((s) => s.status === "proposed").length;
@@ -27,7 +29,7 @@ export default async function Page() {
         <div className="stat"><b>{blind}</b><span>known blind spots</span></div>
       </div>
 
-      <SourceList initial={sources} />
+      <SourceList readOnly={viewer !== "owner"} initial={sources} />
     </>
   );
 }

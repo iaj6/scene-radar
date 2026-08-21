@@ -100,7 +100,7 @@ dead end every week.
 ```
 cd shows
 npm install
-cp .env.example .env.local     # MCP_TOKEN, INGEST_TOKEN, BOARD_PASSWORD
+cp .env.example .env.local     # MCP_TOKEN, INGEST_TOKEN, BOARD_PASSWORD, PUBLIC_VIEW
 npx vercel --prod              # attach a Blob store in the Vercel dashboard
 ```
 
@@ -108,6 +108,20 @@ npx vercel --prod              # attach a Blob store in the Vercel dashboard
 badge, tier, why-now, ticket link, on-sale date, and sources. An **Act now** panel at the
 top surfaces the break-glass set — tier 1 anywhere, or tickets on sale within 7 days —
 because those are the ones where seeing it a week late is the same as missing it.
+
+**Publishing it read-only.** Set `PUBLIC_VIEW=1` and the board serves anonymous
+visitors a read-only view: everything the radar researched — roster, tiers, dates,
+sources, sweep reports — with `status` and `notes` stripped **server-side**, before the
+data reaches the page. Hiding a field in JSX is not enough; server components serialize
+their props into the RSC payload, so a merely-hidden field is still in the page source.
+Writes stay behind Basic Auth, the agent and ingest bearers are untouched, and the mode
+is off unless the variable is exactly `1`. Log in and you get the full board back.
+
+One thing that does *not* happen: shows are never hidden by status. Dropping the ones
+you're attending would leak more than it hides — absence is a signal, and a row missing
+from an otherwise-complete board says "he's going to that one" to anyone diffing it
+against a venue calendar. Stripping the field tells a visitor nothing; removing the row
+tells them something.
 
 **The status field is yours.** `new → interested → going → tickets`, or `passed` /
 `missed`. A sweep re-pushing the same show refreshes the researched fields and never
@@ -204,6 +218,8 @@ Tier 1 never goes below monthly.
 - `agents/rubrics/` — the grading rubric for a sweep
 - `skills/` — the sweep protocol and the verification contract
 - `shows/` — the board: Next.js UI + MCP server + Blob store
+- `shows/proxy.ts` — the auth doors: agent bearer, ingest bearer, Basic Auth, public view
+- `shows/lib/viewer.ts` — who's looking, and what gets redacted before it reaches them
 - `src/setup.ts` — one-time provisioning
 - `src/setup-mcp.ts` — vault credential + wires the radar to the board
 - `src/sweep.ts` — the session runner

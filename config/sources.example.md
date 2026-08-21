@@ -23,6 +23,11 @@ prompt cleverness.
 - Record in `_learnings.md` which sources have actually produced a real find, and which
   have produced nothing over many sweeps. Promote and demote accordingly, and say so in
   the sweep report.
+- **Describe distance by ring, never by the operator's location.** If the board is
+  published read-only (`PUBLIC_VIEW=1`), everything written into a `notes` or
+  `reach_notes` field is public. Say "Ring 1" or "shortest drive on this list" — never
+  name a home town, and never phrase a note as distance-from-where-I-live. The ring
+  vocabulary already carries everything a sourcing decision needs.
 
 ## Venues — Ring 1 first, then Ring 2–3
 

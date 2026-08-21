@@ -1,10 +1,13 @@
 import { listBands, isDue } from "@/lib/bands";
+import { getViewer } from "@/lib/viewer-server";
+import { redactBands } from "@/lib/viewer";
 import { Roster } from "./Roster";
 
 export const dynamic = "force-dynamic";
 
 export default async function Page() {
-  const bands = await listBands();
+  const viewer = await getViewer();
+  const bands = redactBands(await listBands(), viewer);
   const active = bands.filter((b) => b.listed === "active");
   const due = active.filter((b) => isDue(b)).length;
   const suggested = bands.filter((b) => b.listed === "suggested").length;
@@ -15,8 +18,9 @@ export default async function Page() {
       <div className="page-head">
         <h1>The Watchlist</h1>
         <p>
-          Who the radar is watching. You curate this — the agent reads it at the start of
-          every sweep, and it can suggest but never promote.
+          {viewer === "owner"
+            ? "Who the radar is watching. You curate this — the agent reads it at the start of every sweep, and it can suggest but never promote."
+            : "Who the radar is watching. Tiers are set by hand; everything else on a card is the agent's research."}
         </p>
       </div>
 
@@ -27,7 +31,7 @@ export default async function Page() {
         <div className={suggested ? "stat hot" : "stat"}><b>{suggested}</b><span>suggested</span></div>
       </div>
 
-      <Roster initial={bands} />
+      <Roster initial={bands} readOnly={viewer !== "owner"} />
     </>
   );
 }

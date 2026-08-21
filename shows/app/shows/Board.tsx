@@ -1,7 +1,8 @@
 "use client";
 
 import { Fragment, useMemo, useState } from "react";
-import { STATUSES, type Show, type Status } from "@/lib/store";
+import { STATUSES, type Status } from "@/lib/store";
+import type { ViewShow } from "@/lib/viewer";
 
 type When = "upcoming" | "past" | "all";
 
@@ -22,14 +23,14 @@ function daysUntil(iso: string): number {
   return Math.round(ms / 86_400_000);
 }
 
-export function Board({ initial }: { initial: Show[] }) {
+export function Board({ initial, readOnly = false }: { initial: ViewShow[]; readOnly?: boolean }) {
   const [shows, setShows] = useState(initial);
   const [when, setWhen] = useState<When>("upcoming");
   const [q, setQ] = useState("");
   const [saved, setSaved] = useState<string | null>(null);
 
   const t = today();
-  const upcoming = (s: Show) => s.date === null || s.date >= t;
+  const upcoming = (s: ViewShow) => s.date === null || s.date >= t;
 
   const visible = useMemo(() => {
     let out = shows;
@@ -52,7 +53,7 @@ export function Board({ initial }: { initial: Show[] }) {
         (s) =>
           upcoming(s) &&
           s.confidence === "CONFIRMED" &&
-          s.status === "new" &&
+          (s.status ?? "new") === "new" &&
           s.lineup_ok !== false &&
           s.lineup_ok !== null &&
           (s.tier === 1 || (s.on_sale && s.on_sale >= t && daysUntil(s.on_sale) <= 7)),
@@ -78,7 +79,7 @@ export function Board({ initial }: { initial: Show[] }) {
 
   // Group by month so the list reads like a calendar. Undated SIGNAL entries collect
   // at the end under their own heading — they're real leads, just not plannable yet.
-  const groups: { label: string; rows: Show[] }[] = [];
+  const groups: { label: string; rows: ViewShow[] }[] = [];
   for (const s of visible) {
     const label = s.date ? MONTH(s.date) : "No date yet";
     const last = groups[groups.length - 1];
@@ -141,14 +142,14 @@ export function Board({ initial }: { initial: Show[] }) {
               <th>Who / where</th>
               <th>Why</th>
               <th>Source</th>
-              <th>Status</th>
+              {!readOnly && <th>Status</th>}
             </tr>
           </thead>
           <tbody>
             {groups.map((g) => (
               <Fragment key={g.label}>
                 <tr className="group-row">
-                  <td colSpan={5}>
+                  <td colSpan={readOnly ? 4 : 5}>
                     <span>{g.label}</span>
                     <span className="count">{g.rows.length}</span>
                   </td>
@@ -202,20 +203,22 @@ export function Board({ initial }: { initial: Show[] }) {
                         </a>
                       ))}
                     </td>
-                    <td>
-                      <select
-                        data-status={s.status}
-                        value={s.status}
-                        onChange={(e) => setStatus(s.id, e.target.value as Status)}
-                      >
-                        {STATUSES.map((st) => (
-                          <option key={st} value={st}>
-                            {st}
-                          </option>
-                        ))}
-                      </select>
-                      {saved === s.id && <span className="saved">saved</span>}
-                    </td>
+                    {!readOnly && (
+                      <td>
+                        <select
+                          data-status={s.status}
+                          value={s.status}
+                          onChange={(e) => setStatus(s.id, e.target.value as Status)}
+                        >
+                          {STATUSES.map((st) => (
+                            <option key={st} value={st}>
+                              {st}
+                            </option>
+                          ))}
+                        </select>
+                        {saved === s.id && <span className="saved">saved</span>}
+                      </td>
+                    )}
                   </tr>
                 ))}
               </Fragment>

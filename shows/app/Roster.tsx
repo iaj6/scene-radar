@@ -12,7 +12,7 @@ function tierClass(t: Tier | null) {
   return t === 1 ? "t1" : t === 2 ? "t2" : t === 3 ? "t3" : "tnone";
 }
 
-export function Roster({ initial }: { initial: Band[] }) {
+export function Roster({ initial, readOnly = false }: { initial: Band[]; readOnly?: boolean }) {
   const [bands, setBands] = useState(initial);
   const [open, setOpen] = useState<string | null>(null);
   const [q, setQ] = useState("");
@@ -78,7 +78,7 @@ export function Roster({ initial }: { initial: Band[] }) {
           <button className={showDismissed ? "on" : ""} onClick={() => setShowDismissed((v) => !v)}>
             {showDismissed ? "hiding nothing" : `show dismissed (${bands.filter((b) => b.listed === "dismissed").length})`}
           </button>
-          <button onClick={() => setAdding(true)}>+ add band</button>
+          {!readOnly && <button onClick={() => setAdding(true)}>+ add band</button>}
         </div>
         <input className="search" placeholder="band, region, signal…" value={q} onChange={(e) => setQ(e.target.value)} />
       </div>
@@ -98,7 +98,7 @@ export function Roster({ initial }: { initial: Band[] }) {
           </p>
           <div className="cards">
             {suggested.map((b) => (
-              <SuggestionCard key={b.slug} band={b} onPatch={patch} onOpen={() => setOpen(b.slug)} />
+              <SuggestionCard key={b.slug} band={b} onPatch={patch} onOpen={() => setOpen(b.slug)} readOnly={readOnly} />
             ))}
           </div>
         </>
@@ -133,15 +133,21 @@ export function Roster({ initial }: { initial: Band[] }) {
             {roster.map((b) => (
               <tr key={b.slug} className={b.listed === "paused" ? "past" : ""}>
                 <td>
-                  <select
-                    value={b.tier ?? ""}
-                    onChange={(e) => patch(b.slug, { tier: Number(e.target.value) as Tier })}
-                    aria-label={`Tier for ${b.name}`}
-                  >
-                    {[1, 2, 3].map((t) => (
-                      <option key={t} value={t}>{TIER_LABEL[String(t)]}</option>
-                    ))}
-                  </select>
+                  {readOnly ? (
+                    <span className={`tier t${b.tier ?? ""}`}>
+                      {b.tier ? TIER_LABEL[String(b.tier)] : "—"}
+                    </span>
+                  ) : (
+                    <select
+                      value={b.tier ?? ""}
+                      onChange={(e) => patch(b.slug, { tier: Number(e.target.value) as Tier })}
+                      aria-label={`Tier for ${b.name}`}
+                    >
+                      {[1, 2, 3].map((t) => (
+                        <option key={t} value={t}>{TIER_LABEL[String(t)]}</option>
+                      ))}
+                    </select>
+                  )}
                 </td>
                 <td>
                   <a
@@ -165,16 +171,24 @@ export function Roster({ initial }: { initial: Band[] }) {
                   {b.last_checked && !isDue(b) && <div>{daysSinceChecked(b)}d ago</div>}
                 </td>
                 <td>
-                  <select value={b.recheck ?? "weekly"} onChange={(e) => patch(b.slug, { recheck: e.target.value as any })}>
-                    {RECHECKS.map((r) => (<option key={r} value={r}>{r}</option>))}
-                  </select>
+                  {readOnly ? (
+                    <span>{b.recheck ?? "weekly"}</span>
+                  ) : (
+                    <select value={b.recheck ?? "weekly"} onChange={(e) => patch(b.slug, { recheck: e.target.value as any })}>
+                      {RECHECKS.map((r) => (<option key={r} value={r}>{r}</option>))}
+                    </select>
+                  )}
                 </td>
                 <td>
-                  <select value={b.listed} onChange={(e) => patch(b.slug, { listed: e.target.value as Listed })}>
-                    <option value="active">active</option>
-                    <option value="paused">paused</option>
-                    <option value="dismissed">dismiss</option>
-                  </select>
+                  {readOnly ? (
+                    <span>{b.listed}</span>
+                  ) : (
+                    <select value={b.listed} onChange={(e) => patch(b.slug, { listed: e.target.value as Listed })}>
+                      <option value="active">active</option>
+                      <option value="paused">paused</option>
+                      <option value="dismissed">dismiss</option>
+                    </select>
+                  )}
                 </td>
               </tr>
             ))}
@@ -196,7 +210,7 @@ export function Roster({ initial }: { initial: Band[] }) {
                   <td style={{ fontWeight: 700 }}>{b.name}</td>
                   <td className="mono-sm">{b.discovered_via ? `via ${b.discovered_via.edge} — ${b.discovered_via.band}` : b.notes ?? "—"}</td>
                   <td style={{ width: 150 }}>
-                    <button onClick={() => patch(b.slug, { listed: "active" })}>restore</button>
+                    {!readOnly && <button onClick={() => patch(b.slug, { listed: "active" })}>restore</button>}
                   </td>
                 </tr>
               ))}
@@ -206,15 +220,20 @@ export function Roster({ initial }: { initial: Band[] }) {
       )}
 
       {openBand && (
-        <BandDrawer band={openBand} onClose={() => setOpen(null)} onPatch={patch} onDelete={remove} />
+        <BandDrawer band={openBand} onClose={() => setOpen(null)} onPatch={patch} onDelete={remove} readOnly={readOnly} />
       )}
     </>
   );
 }
 
 function SuggestionCard({
-  band, onPatch, onOpen,
-}: { band: Band; onPatch: (s: string, f: Partial<Band>) => void; onOpen: () => void }) {
+  band, onPatch, onOpen, readOnly,
+}: {
+  band: Band;
+  onPatch: (s: string, f: Partial<Band>) => void;
+  onOpen: () => void;
+  readOnly: boolean;
+}) {
   const via = band.discovered_via;
   return (
     <div className="card">
@@ -230,18 +249,20 @@ function SuggestionCard({
         </div>
       )}
       {band.signal && <div className="sig">{band.signal}</div>}
-      <div className="foot">
-        <div className="filters">
-          {[1, 2, 3].map((t) => (
-            <button key={t} onClick={() => onPatch(band.slug, { tier: t as Tier, listed: "active" })}>
-              {TIER_LABEL[String(t)]}
-            </button>
-          ))}
+      {!readOnly && (
+        <div className="foot">
+          <div className="filters">
+            {[1, 2, 3].map((t) => (
+              <button key={t} onClick={() => onPatch(band.slug, { tier: t as Tier, listed: "active" })}>
+                {TIER_LABEL[String(t)]}
+              </button>
+            ))}
+          </div>
+          <button className="danger" onClick={() => onPatch(band.slug, { listed: "dismissed" })}>
+            dismiss
+          </button>
         </div>
-        <button className="danger" onClick={() => onPatch(band.slug, { listed: "dismissed" })}>
-          dismiss
-        </button>
-      </div>
+      )}
     </div>
   );
 }
@@ -274,12 +295,13 @@ function AddBand({ onCancel, onCreate }: { onCancel: () => void; onCreate: (n: s
 }
 
 function BandDrawer({
-  band, onClose, onPatch, onDelete,
+  band, onClose, onPatch, onDelete, readOnly,
 }: {
   band: Band;
   onClose: () => void;
   onPatch: (s: string, f: Partial<Band>) => void;
   onDelete: (s: string) => void;
+  readOnly: boolean;
 }) {
   const [notes, setNotes] = useState(band.notes ?? "");
   const [qual, setQual] = useState(band.lineup_qualifier ?? "");
@@ -364,28 +386,38 @@ function BandDrawer({
 
         <div className="field" style={{ marginTop: 18 }}>
           <label>Lineup qualifier</label>
-          <input
-            value={qual}
-            onChange={(e) => setQual(e.target.value)}
-            placeholder="e.g. original singer on vocals"
-          />
+          {readOnly ? (
+            <div className="mono-sm">{qual || "—"}</div>
+          ) : (
+            <input
+              value={qual}
+              onChange={(e) => setQual(e.target.value)}
+              placeholder="e.g. original singer on vocals"
+            />
+          )}
           <span className="mono-sm">
             A show that fails this is reported but never alarms.
           </span>
         </div>
 
-        <div className="field">
-          <label>Your notes</label>
-          <textarea rows={4} value={notes} onChange={(e) => setNotes(e.target.value)} />
-        </div>
+        {/* Notes are human-owned and stripped for public viewers before they ever
+            reach the client, so there is nothing to render here in read-only mode. */}
+        {!readOnly && (
+          <div className="field">
+            <label>Your notes</label>
+            <textarea rows={4} value={notes} onChange={(e) => setNotes(e.target.value)} />
+          </div>
+        )}
 
         <div className="drawer-foot">
           <div style={{ display: "flex", gap: 8 }}>
-            <button className="primary" onClick={save}>save</button>
+            {!readOnly && <button className="primary" onClick={save}>save</button>}
             {saved && <span className="saved">saved</span>}
             <button onClick={onClose}>close</button>
           </div>
-          <button className="danger" onClick={() => onDelete(band.slug)}>delete</button>
+          {!readOnly && (
+            <button className="danger" onClick={() => onDelete(band.slug)}>delete</button>
+          )}
         </div>
       </div>
     </div>
